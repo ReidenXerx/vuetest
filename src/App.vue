@@ -13,24 +13,40 @@ export default {
   components: {
   },
   mounted() {
-    for (var i = 0; i < 10; i++) {
-      // this.stackNotes.push({
-      //   name: `name ${i}`,
-      //   todos: [
-      //     { text: `text-1 for ${i}'s note`, done: false },
-      //     { text: `text-2 for ${i}'s note`, done: false },
-      //     { text: `text-3 for ${i}'s note`, done: false }
-      //   ]
-      // })
-      this.$store.commit('addNote', {
-        name: `name ${i}`,
-        todos: [
-          { text: `text-1 for ${i}'s note`, done: false },
-          { text: `text-2 for ${i}'s note`, done: false },
-          { text: `text-3 for ${i}'s note`, done: false }
-        ]
-      })
-    }
+    // for (var i = 0; i < 10; i++) {
+    //   // this.stackNotes.push({
+    //   //   name: `name ${i}`,
+    //   //   todos: [
+    //   //     { text: `text-1 for ${i}'s note`, done: false },
+    //   //     { text: `text-2 for ${i}'s note`, done: false },
+    //   //     { text: `text-3 for ${i}'s note`, done: false }
+    //   //   ]
+    //   // })
+    //   this.$store.commit('addNote', {
+    //     name: `name ${i}`,
+    //     todos: [
+    //       { text: `text-1 for ${i}'s note`, done: false },
+    //       { text: `text-2 for ${i}'s note`, done: false },
+    //       { text: `text-3 for ${i}'s note`, done: false }
+    //     ]
+    //   })
+    // }
+
+    // for (let i = 1; i < 10; i++) {
+    //   this.$store.dispatch('loadDataServer', i).then((objectResponse) => {
+    //     console.log(objectResponse)
+    //     objectResponse.data = objectResponse.data.map(element => {
+    //       return { text: element.title, done: element.completed }
+    //     })
+    //     this.$store.commit('addNote', {
+    //       name: `name ${i}`,
+    //       todos: objectResponse.data.concat()
+    //     })
+    //     console.log(objectResponse)
+    //   })
+    // }
+    this.$store.dispatch('loadDataServer', [1, 10])
+
   }
 }
 </script>

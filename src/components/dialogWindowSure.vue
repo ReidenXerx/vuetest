@@ -30,5 +30,10 @@ export default {
   position: absolute;
   margin: 0 auto;
   background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 1px solid black;
 }
 </style>

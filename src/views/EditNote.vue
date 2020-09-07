@@ -21,48 +21,64 @@
     <div class="panel">
       <button type="button" @click="save" class="btn btn-success">Save</button>
       <button type="button" @click="close" class="btn btn-danger">Cancel</button>
+      <button type="button" @click="undo" class="btn btn-link">Undo</button>
+      <!-- <button type="button" @click="redo" class="btn btn-link">Redo</button> -->
     </div>
+    <dialogWindowSure v-if="dialogTurn" v-on:apply="applyDelete" v-on:discard="discardDelete" />
   </div>
 </template>
 
 <script>
+import dialogWindowSure from "@/components/dialogWindowSure.vue"
+
 export default {
+
+  components: {
+    dialogWindowSure
+  },
 
   data() {
     return {
       name: '',
-      todos: []
+      todos: [],
+      todosBackup: [],
+      dialogTurn: false
     }
   },
 
   mounted() {
     // this.name = this.autoload(this.$route.params.id).name // геттеры все равно образуют реактивные связи
-    let buf = this.$store.getters.getNotesStorageById(this.$route.params.id)
-    buf = Object.assign({}, buf, {
-    name: buf.name,
-    todos: JSON.parse(JSON.stringify(buf.todos)) // 3 параметр - конструктор копирования
-    })
+    let buf = this.reloadData()
     // let buf = this.reloadData(this.$route.params.id)
     this.name = buf.name
     this.todos = buf.todos
   },
 
   methods: {
-    reloadData: function(index) {
-      // console.log('buffer ' + index)
-      // let buffer = this.$store.getters.getNotesStorage
-      // console.log(this.$store.getters.getNotesStorage)
-      // // console.log(this.$store.getters.getNotesStorageById(1))
-      // console.log('buffer ' + buffer[index])
-      // return buffer[index]
-      return this.copyObject(this.$store.getters.getNotesStorageById(index))
+    reloadData: function() {
+      let buf = this.$store.getters.getNotesStorageById(this.$route.params.id)
+      buf = Object.assign({}, buf, {
+      name: buf.name,
+      todos: JSON.parse(JSON.stringify(buf.todos)) // 3 параметр - конструктор копирования
+      })
+      return buf
+    },
+    showDialog: function() { // как исправить дублирование
+      this.dialogTurn = true
+    },
+    hideDialog: function() {
+      this.dialogTurn = false
+    },
+    backupData: function() {
+      this.todosBackup = this.reloadData().todos
     },
     close: function() {
       this.$router.push({path: `/`})
     },
     save: function() {
+      this.backupData()
       this.$store.commit('saveNote', [this.$route.params.id, {name: this.name, todos: this.todos}])
-      this.$router.push({path: `/`})
+      // this.$router.push({path: `/`})
     },
     addTodo: function() {
       this.todos.push({
@@ -70,9 +86,25 @@ export default {
         done: false
       })
     },
-    deleteTodo: function() {
+    applyDelete: function() {
+      this.hideDialog()
       this.todos.splice(this.todos.length - 1, 1)
-    }
+    },
+    discardDelete: function() {
+      this.hideDialog()
+    },
+    deleteTodo: function() {
+      this.showDialog()
+    },
+    undo: function() {
+      if (this.todosBackup.length != 0) {
+        let buf = this.todos.concat()
+        this.todos = this.todosBackup.concat()
+        this.todosBackup = buf.concat()
+        this.$store.commit('saveNote', [this.$route.params.id, {name: this.name, todos: this.todosBackup}])
+      }
+    },
+
     // copyObject: function(object) {
     //   let copyParams = {}
     //   for (let key in object) {
@@ -94,6 +126,9 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.container {
+  position: relative;
+}
 .buttons{
   display: flex;
   justify-content: space-around;
@@ -104,7 +139,19 @@ export default {
 .panel {
   display: flex;
   justify-content: space-around;
-  padding-left: 40%;
-  padding-right: 40%;
+  padding-left: 30%;
+  padding-right: 30%;
+}
+.window {
+  height: 50%;
+  width: 50%;
+  position: absolute;
+  margin: 0 auto;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 1px solid black;
 }
 </style>

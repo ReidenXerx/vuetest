@@ -21,7 +21,8 @@ export default {
     }
   },
   mounted() {
-    this.reloadData(this.$store.getters.getNotesStorage)
+    // this.reloadData(this.$store.getters.getNotesStorage)
+    this.stackNotes = this.$store.getters.getNotesStorage.concat()
     console.log(this.$store)
   },
   methods: {
@@ -61,7 +62,8 @@ export default {
       //   }))
       // }
       // this.stackNotes = this.copyArrayObjects(array)
-      this.stackNotes = this.copyArrayObjects(array)
+      // this.stackNotes = this.copyArrayObjects(array)
+      this.stackNotes = array.concat()
     },
     copyArrayObjects: function(array) { //убедиться что оно работает
       let newArray = []
