@@ -31,7 +31,6 @@ export default {
   },
   data() {
     return {
-      // todos: ['hui1', 'hui2', 'hui3', 'hui4']
     }
   },
   methods: {
